@@ -20,7 +20,6 @@ public class AtendimentoManager implements Runnable {
                     iniciarAtendimento(clienteAtual);
                 }
 
-                // Pausa para evitar uso excessivo de CPU
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
                 System.err.println("Gerenciador de atendimento interrompido: " + e.getMessage());
