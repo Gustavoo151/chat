@@ -53,7 +53,6 @@ public class BancoDeDados {
         }
     }
 
-
     private String gerarNomeArquivo(String email){
         String dataHoje = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
         String emailFormatado = email.replace("@", "_at_").replace(".", "_");
