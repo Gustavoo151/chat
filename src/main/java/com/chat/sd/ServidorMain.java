@@ -4,11 +4,11 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ServidorMain {
-    private static final int PORTA = 8080;
-    private final Queue<Socket> filaClientes = new ConcurrentLinkedDeque<>();
+    private static final int PORTA = 12345;
+    private final Queue<Socket> filaClientes = new ConcurrentLinkedQueue<>();
     private final AtendimentoManager atendimentoManager;
 
     public ServidorMain() {
