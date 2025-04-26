@@ -7,7 +7,7 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ServidorMain {
-    private static final int PORTA = 12345;
+    private static final int PORTA = 8080;
     private final Queue<Socket> filaClientes = new ConcurrentLinkedQueue<>();
     private final AtendimentoManager atendimentoManager;
 
