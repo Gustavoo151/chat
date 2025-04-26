@@ -1,0 +1,5 @@
+com\chat\sd\BancoDeDados.class
+com\chat\sd\Cliente.class
+com\chat\sd\Atendimento.class
+com\chat\sd\ServidorMain.class
+com\chat\sd\AtendimentoManager.class

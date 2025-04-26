@@ -1,0 +1,14 @@
+version: '3'
+services:
+  servidor:
+    image: sd-server
+    ports:
+      - "8080:8080"
+    restart: always
+
+  cliente:
+    image: sd-client
+    depends_on:
+      - servidor
+    environment:
+      - SERVIDOR_ENDERECO=servidor
