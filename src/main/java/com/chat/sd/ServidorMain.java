@@ -36,4 +36,8 @@ public class ServidorMain {
         }
     }
 
+    public static void main(String[] args) {
+        ServidorMain servidor = new ServidorMain();
+        servidor.iniciar();
+    }
 }
