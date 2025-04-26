@@ -10,6 +10,9 @@ public class Atendimento {
     private final Socket clienteSocket;
     private final AtendimentoManager manager;
     private BufferedReader leitorCliente;
+    private PrintWriter escritorCliente;
+    private BufferedReader leitorConsole;
+    private String emailCliente;
     private final BancoDeDados bancoDeDados;
 
     public Atendimento(Socket clienteSOcket, AtendimentoManager manager){
@@ -19,4 +22,9 @@ public class Atendimento {
         this.leitorCliente = new BufferedReader(new InputStreamReader(System.in));
     }
 
+
+    private void inicializarStreams() throws Exception {
+        leitorCliente = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
+        escritorCliente = new PrintWriter(clienteSocket.getOutputStream(), true);
+    }
 }
