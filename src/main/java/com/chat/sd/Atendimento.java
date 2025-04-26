@@ -35,4 +35,20 @@ public class Atendimento {
 
         bancoDeDados.iniciarAtendimento(emailCliente);
     }
+
+    private void encerrarAtendimento() {
+        try {
+            System.out.println("Encerrando atendimento para o cliente: " + emailCliente);
+
+            if(leitorCliente != null) leitorCliente.close();
+            if(escritorCliente != null) escritorCliente.close();
+            if(clienteSocket != null && !clienteSocket.isClosed()) clienteSocket.close();
+
+            bancoDeDados.finalizarAtendimento(emailCliente);
+
+            manager.finalizarAtendimento();
+        } catch (IOException e) {
+            System.err.println("Erro ao encerrar o atendimento: " + e.getMessage());
+        }
+    }
 }
