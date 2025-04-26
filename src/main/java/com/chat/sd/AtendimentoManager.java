@@ -11,4 +11,15 @@ public class AtendimentoManager {
     public AtendimentoManager(Queue<Socket> filaClientes) {
         this.filaClientes = filaClientes;
     }
+
+
+    private void iniciarAtendimento(Socket clienteSocket) {
+        atendimentoEmAndamento = true;
+        System.out.println("Iniciando atendimento para cliente: " +
+                clienteSocket.getInetAddress().getHostAddress());
+
+        Atendimento atendimento = new Atendimento(clienteSocket, this);
+        Thread threadAtendimento = new Thread(atendimento);
+        threadAtendimento.start();
+    }
 }
