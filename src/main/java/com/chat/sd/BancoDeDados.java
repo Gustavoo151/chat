@@ -6,7 +6,6 @@ import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -31,7 +30,7 @@ public class BancoDeDados {
         String nomeArquivo = gerarNomeArquivo(email);
         try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true)))
         {
-            String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            String dataHora = LocalDateTime.now().format(FORMATADOR_DATA);
             writer.println("=== INÍCIO DO ATENDIMENTO - " + dataHora + " ===");
             writer.println("Cliente: " + email);
             writer.println();
@@ -55,7 +54,7 @@ public class BancoDeDados {
 
     private String gerarNomeArquivo(String email){
         String dataHoje = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String emailFormatado = email.replace("@", "_at_").replace(".", "_");
+        String emailFormatado = email.replace("@", "at").replace(".", "_");
         return DIRETORIO_LOGS + "/" + dataHoje + "_" + emailFormatado + ".log";
     }
 }
