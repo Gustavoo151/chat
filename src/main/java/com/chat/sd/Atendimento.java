@@ -7,7 +7,7 @@ import java.io.PrintWriter;
 import java.net.Socket;
 
 
-public class Atendimento {
+public class Atendimento implements Runnable{
     private final Socket clienteSocket;
     private final AtendimentoManager manager;
     private BufferedReader leitorCliente;
@@ -22,6 +22,21 @@ public class Atendimento {
         this.bancoDeDados = new BancoDeDados();
         this.leitorCliente = new BufferedReader(new InputStreamReader(System.in));
     }
+
+    @Override
+    public void run(){
+        try {
+            inicializarStreams();
+            solicitarEmail();
+            inicializarStreams();
+        }catch (Exception e){
+            System.err.println("Erro durante o atendimento: " + e.getMessage());
+
+        }   finally {
+            encerrarAtendimento();
+        }
+    }
+
 
 
     private void inicializarStreams() throws IOException {
