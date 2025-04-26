@@ -1,6 +1,7 @@
 package com.chat.sd;
 
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,6 +39,20 @@ public class BancoDeDados {
             System.err.println("Erro ao registrar início do atendimento: " + e.getMessage());
         };
     }
+
+    public void finalizarAtendimento(String email) {
+        String nomeArquivo = gerarNomeArquivo(email);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true))) {
+            String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            writer.println();
+            writer.println("=== FIM DO ATENDIMENTO - " + dataHora + " ===");
+
+            System.out.println("Atendimento finalizado e registrado para: " + email);
+        } catch (IOException e) {
+            System.err.println("Erro ao registrar fim do atendimento: " + e.getMessage());
+        }
+    }
+
 
     private String gerarNomeArquivo(String email){
         String dataHoje = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
