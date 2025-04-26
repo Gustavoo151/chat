@@ -1,17 +1,13 @@
-FROM ubuntu:latest
-FROM openjdk:23-slim
-LABEL authors="joseg"
-
+# Build comum - Use uma imagem que suporta Java 21
+# Servidor
+FROM eclipse-temurin:21-jre AS server
 WORKDIR /app
-COPY target/sd-server.jar .
+COPY target/*.jar ./app.jar
 EXPOSE 8080
-CMD ["java", "-jar", "sd-server.jar"]
+CMD ["java", "-jar", "app.jar", "--server"]
 
-FROM openjdk:23-slim
-LABEL authors="joseg"
-
+# Cliente
+FROM eclipse-temurin:21-jre AS client
 WORKDIR /app
-COPY target/sd-client.jar .
-CMD ["java", "-jar", "sd-client.jar"]
-
-ENTRYPOINT ["top", "-b"]
+COPY target/*.jar ./app.jar
+CMD ["java", "-jar", "app.jar", "--client"]
