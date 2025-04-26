@@ -1,5 +1,7 @@
 package com.chat.sd;
 
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,7 +26,18 @@ public class BancoDeDados {
         };
     }
 
-
+    public void iniciarAtendimento(String email){
+        String nomeArquivo = gerarNomeArquivo(email);
+        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true)))
+        {
+            String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+            writer.println("=== INÍCIO DO ATENDIMENTO - " + dataHora + " ===");
+            writer.println("Cliente: " + email);
+            writer.println();
+        }catch (Exception e){
+            System.err.println("Erro ao registrar início do atendimento: " + e.getMessage());
+        };
+    }
 
     private String gerarNomeArquivo(String email){
         String dataHoje = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
