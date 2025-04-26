@@ -22,4 +22,10 @@ public class AtendimentoManager {
         Thread threadAtendimento = new Thread(atendimento);
         threadAtendimento.start();
     }
+
+    private void finalizarAtendimento() {
+        atendimentoEmAndamento = false;
+        System.out.println("Atendimento finalizado. Verificando próximo cliente na fila...");
+    }
+
 }
