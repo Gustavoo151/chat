@@ -1,6 +1,7 @@
 package com.chat.sd;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -23,8 +24,15 @@ public class Atendimento {
     }
 
 
-    private void inicializarStreams() throws Exception {
+    private void inicializarStreams() throws IOException {
         leitorCliente = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
         escritorCliente = new PrintWriter(clienteSocket.getOutputStream(), true);
+    }
+
+    public void solicitarEmail() throws IOException {
+        escritorCliente.println("Bem-vindo ao sistema de atendimento. Por favor, informe seu e-mail: ");
+        emailCliente = leitorCliente.readLine();
+
+        bancoDeDados.iniciarAtendimento(emailCliente);
     }
 }
