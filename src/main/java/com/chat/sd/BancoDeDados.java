@@ -19,13 +19,20 @@ public class BancoDeDados {
 
     public BancoDeDados() {
         try {
-            Path diretorio = Paths.get(DIRETORIO_LOGS);
-            if (!Files.exists(diretorio)) {
-                Files.createDirectories(diretorio);
-                System.out.println("Diretório de logs criado: " + diretorio.toAbsolutePath());
+            // Configure a conexão MongoDB
+            // Use environment variable for connection string or default to localhost
+            String connectionString = System.getenv("MONGODB_URI");
+            if (connectionString == null || connectionString.isEmpty()) {
+                connectionString = "mongodb://localhost:27017";
             }
-        } catch (IOException e) {
-            System.err.println("Erro ao criar diretório de logs: " + e.getMessage());
+
+            mongoClient = MongoClients.create(connectionString);
+            database = mongoClient.getDatabase("chat_sd");
+            chatCollection = database.getCollection("atendimentos");
+
+            System.out.println("Conexão com MongoDB estabelecida");
+        } catch (Exception e) {
+            System.err.println("Erro ao conectar com MongoDB: " + e.getMessage());
         }
     }
 
