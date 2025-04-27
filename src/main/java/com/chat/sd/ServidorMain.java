@@ -5,9 +5,12 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import io.github.cdimascio.dotenv.Dotenv;
+
 
 public class ServidorMain {
-    private static final int PORTA = 8080;
+    static Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
+    private static final int PORTA = Integer.parseInt(dotenv.get("PORTA"));
     private final Queue<Socket> filaClientes = new ConcurrentLinkedQueue<>();
     private final AtendimentoManager atendimentoManager;
 
