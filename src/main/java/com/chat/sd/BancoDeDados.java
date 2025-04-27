@@ -1,72 +1,106 @@
 package com.chat.sd;
 
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 
 public class BancoDeDados {
-    private static final String DIRETORIO_LOGS = "logs_atendimento";
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private MongoClient mongoClient;
+    private MongoDatabase database;
+    private MongoCollection<Document> chatCollection;
 
     public BancoDeDados() {
         try {
-            Path diretorio = Paths.get(DIRETORIO_LOGS);
-            if (!Files.exists(diretorio)) {
-                Files.createDirectories(diretorio);
-                System.out.println("Diretório de logs criado: " + diretorio.toAbsolutePath());
+            String connectionString = System.getenv("MONGODB_URI");
+            if (connectionString == null || connectionString.isEmpty()) {
+                connectionString = "mongodb://localhost:27017";
             }
-        } catch (IOException e) {
-            System.err.println("Erro ao criar diretório de logs: " + e.getMessage());
+
+            mongoClient = MongoClients.create(connectionString);
+            database = mongoClient.getDatabase("chat_sd");
+            chatCollection = database.getCollection("atendimentos");
+
+            System.out.println("Conexão com MongoDB estabelecida");
+        } catch (Exception e) {
+            System.err.println("Erro ao conectar com MongoDB: " + e.getMessage());
         }
     }
 
     public void iniciarAtendimento(String email) {
-        String nomeArquivo = gerarNomeArquivo(email);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true))) {
+        try {
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            writer.println("=== INÍCIO DO ATENDIMENTO - " + dataHora + " ===");
-            writer.println("Cliente: " + email);
-            writer.println();
 
+            Document atendimento = new Document()
+                    .append("email", email)
+                    .append("dataInicio", dataHora)
+                    .append("mensagens", new ArrayList<Document>())
+                    .append("status", "ativo");
+
+            chatCollection.insertOne(atendimento);
             System.out.println("Atendimento iniciado e registrado para: " + email);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Erro ao registrar início do atendimento: " + e.getMessage());
         }
     }
 
     public void registrarMensagem(String email, String origem, String mensagem) {
-        String nomeArquivo = gerarNomeArquivo(email);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true))) {
+        try {
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-            writer.println("[" + dataHora + "] " + origem + ": " + mensagem);
+
+            Document novaMensagem = new Document()
+                    .append("timestamp", dataHora)
+                    .append("origem", origem)
+                    .append("conteudo", mensagem);
+
+            Bson filter = Filters.and(
+                    Filters.eq("email", email),
+                    Filters.eq("status", "ativo")
+            );
+
+            Bson update = Updates.push("mensagens", novaMensagem);
+            chatCollection.updateOne(filter, update);
 
             System.out.println("Mensagem registrada para: " + email);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Erro ao registrar mensagem: " + e.getMessage());
         }
     }
 
     public void finalizarAtendimento(String email) {
-        String nomeArquivo = gerarNomeArquivo(email);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true))) {
+        try {
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            writer.println();
-            writer.println("=== FIM DO ATENDIMENTO - " + dataHora + " ===");
 
+            Bson filter = Filters.and(
+                    Filters.eq("email", email),
+                    Filters.eq("status", "ativo")
+            );
+
+            Bson update = Updates.combine(
+                    Updates.set("dataFim", dataHora),
+                    Updates.set("status", "finalizado")
+            );
+
+            chatCollection.updateOne(filter, update);
             System.out.println("Atendimento finalizado e registrado para: " + email);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Erro ao registrar fim do atendimento: " + e.getMessage());
         }
     }
 
-    private String gerarNomeArquivo(String email) {
-        String dataHoje = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String emailFormatado = email.replace("@", "_at_").replace(".", "_");
-        return DIRETORIO_LOGS + "/" + dataHoje + "_" + emailFormatado + ".log";
+    public void close() {
+        if (mongoClient != null) {
+            mongoClient.close();
+            System.out.println("Conexão MongoDB fechada");
+        }
     }
 }
