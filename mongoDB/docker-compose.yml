@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # Configuração do nó primário (master)
+  mongo1:
+    image: mongo:6.0
+    container_name: mongo1
+    command: mongod --replSet rs0 --port 27017 --bind_ip_all
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo1_data:/data/db
+    networks:
+      - mongo_network
+    restart: always
+
+  # Configuração do primeiro nó secundário (slave)
+  mongo2:
+    image: mongo:6.0
+    container_name: mongo2
+    command: mongod --replSet rs0 --port 27017 --bind_ip_all
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongo2_data:/data/db
+    networks:
+      - mongo_network
+    restart: always
+
+  # Configuração do segundo nó secundário (slave)
+  mongo3:
+    image: mongo:6.0
+    container_name: mongo3
+    command: mongod --replSet rs0 --port 27017 --bind_ip_all
+    ports:
+      - "27019:27017"
+    volumes:
+      - mongo3_data:/data/db
+    networks:
+      - mongo_network
+    restart: always
+
+  # Script de inicialização do replica set
+  mongo-init:
+    image: mongo:6.0
+    restart: "no"
+    depends_on:
+      - mongo1
+      - mongo2
+      - mongo3
+    networks:
+      - mongo_network
+    command: >
+      bash -c "
+        sleep 10;
+        mongosh --host mongo1:27017 --eval '
+          rs.initiate({
+            _id: \"rs0\",
+            members: [
+              {_id: 0, host: \"mongo1:27017\", priority: 2},
+              {_id: 1, host: \"mongo2:27017\", priority: 1},
+              {_id: 2, host: \"mongo3:27017\", priority: 1}
+            ]
+          });
+        '
+      "
+
+networks:
+  mongo_network:
+    driver: bridge
+
+volumes:
+  mongo1_data:
+  mongo2_data:
+  mongo3_data:
