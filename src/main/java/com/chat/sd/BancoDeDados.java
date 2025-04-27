@@ -12,7 +12,6 @@ import org.bson.conversions.Bson;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.List;
 
 public class BancoDeDados {
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
@@ -22,8 +21,6 @@ public class BancoDeDados {
 
     public BancoDeDados() {
         try {
-            // Configure a conexão MongoDB
-            // Use environment variable for connection string or default to localhost
             String connectionString = System.getenv("MONGODB_URI");
             if (connectionString == null || connectionString.isEmpty()) {
                 connectionString = "mongodb://localhost:27017";
@@ -100,7 +97,6 @@ public class BancoDeDados {
         }
     }
 
-    // Close connection when application shuts down
     public void close() {
         if (mongoClient != null) {
             mongoClient.close();
