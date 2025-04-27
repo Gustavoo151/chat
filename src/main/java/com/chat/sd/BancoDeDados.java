@@ -8,22 +8,26 @@ import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Updates;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import io.github.cdimascio.dotenv.Dotenv;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 public class BancoDeDados {
+    Dotenv dotenv = Dotenv.configure().ignoreIfMissing().load();
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     private MongoClient mongoClient;
     private MongoDatabase database;
     private MongoCollection<Document> chatCollection;
 
+
+
     public BancoDeDados() {
         try {
-            String connectionString = System.getenv("MONGODB_URI");
+            String connectionString = System.getenv(dotenv.get("MONGODB_URI"));
             if (connectionString == null || connectionString.isEmpty()) {
-                connectionString = "mongodb://localhost:27017";
+                connectionString = dotenv.get("CONNECTION_STRING");
             }
 
             mongoClient = MongoClients.create(connectionString);
