@@ -37,15 +37,18 @@ public class BancoDeDados {
     }
 
     public void iniciarAtendimento(String email) {
-        String nomeArquivo = gerarNomeArquivo(email);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true))) {
+        try {
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            writer.println("=== INÍCIO DO ATENDIMENTO - " + dataHora + " ===");
-            writer.println("Cliente: " + email);
-            writer.println();
 
+            Document atendimento = new Document()
+                    .append("email", email)
+                    .append("dataInicio", dataHora)
+                    .append("mensagens", new ArrayList<Document>())
+                    .append("status", "ativo");
+
+            chatCollection.insertOne(atendimento);
             System.out.println("Atendimento iniciado e registrado para: " + email);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Erro ao registrar início do atendimento: " + e.getMessage());
         }
     }
