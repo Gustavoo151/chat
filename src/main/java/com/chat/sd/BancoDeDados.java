@@ -1,5 +1,6 @@
 package com.chat.sd;
 
+import javax.swing.text.Document;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -10,8 +11,11 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class BancoDeDados {
-    private static final String DIRETORIO_LOGS = "logs_atendimento";
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
+    private MongoClient mongoClient;
+    private MongoDatabase database;
+    private MongoCollection<Document> chatCollection;
+
 
     public BancoDeDados() {
         try {
