@@ -54,13 +54,24 @@ public class BancoDeDados {
     }
 
     public void registrarMensagem(String email, String origem, String mensagem) {
-        String nomeArquivo = gerarNomeArquivo(email);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true))) {
+        try {
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-            writer.println("[" + dataHora + "] " + origem + ": " + mensagem);
+
+            Document novaMensagem = new Document()
+                    .append("timestamp", dataHora)
+                    .append("origem", origem)
+                    .append("conteudo", mensagem);
+
+            Bson filter = Filters.and(
+                    Filters.eq("email", email),
+                    Filters.eq("status", "ativo")
+            );
+
+            Bson update = Updates.push("mensagens", novaMensagem);
+            chatCollection.updateOne(filter, update);
 
             System.out.println("Mensagem registrada para: " + email);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Erro ao registrar mensagem: " + e.getMessage());
         }
     }
