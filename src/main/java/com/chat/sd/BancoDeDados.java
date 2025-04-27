@@ -77,21 +77,23 @@ public class BancoDeDados {
     }
 
     public void finalizarAtendimento(String email) {
-        String nomeArquivo = gerarNomeArquivo(email);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(nomeArquivo, true))) {
+        try {
             String dataHora = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-            writer.println();
-            writer.println("=== FIM DO ATENDIMENTO - " + dataHora + " ===");
 
+            Bson filter = Filters.and(
+                    Filters.eq("email", email),
+                    Filters.eq("status", "ativo")
+            );
+
+            Bson update = Updates.combine(
+                    Updates.set("dataFim", dataHora),
+                    Updates.set("status", "finalizado")
+            );
+
+            chatCollection.updateOne(filter, update);
             System.out.println("Atendimento finalizado e registrado para: " + email);
-        } catch (IOException e) {
+        } catch (Exception e) {
             System.err.println("Erro ao registrar fim do atendimento: " + e.getMessage());
         }
-    }
-
-    private String gerarNomeArquivo(String email) {
-        String dataHoje = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
-        String emailFormatado = email.replace("@", "_at_").replace(".", "_");
-        return DIRETORIO_LOGS + "/" + dataHoje + "_" + emailFormatado + ".log";
     }
 }
