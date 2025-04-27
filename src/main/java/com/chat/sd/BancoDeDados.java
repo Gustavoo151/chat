@@ -96,4 +96,11 @@ public class BancoDeDados {
             System.err.println("Erro ao registrar fim do atendimento: " + e.getMessage());
         }
     }
+
+    public void close() {
+        if (mongoClient != null) {
+            mongoClient.close();
+            System.out.println("Conexão MongoDB fechada");
+        }
+    }
 }
