@@ -1,21 +1,24 @@
 package com.chat.sd;
 
-import javax.swing.text.Document;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoClients;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Updates;
+import org.bson.Document;
+import org.bson.conversions.Bson;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BancoDeDados {
     private static final DateTimeFormatter FORMATADOR_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss");
     private MongoClient mongoClient;
     private MongoDatabase database;
     private MongoCollection<Document> chatCollection;
-
 
     public BancoDeDados() {
         try {
@@ -97,6 +100,7 @@ public class BancoDeDados {
         }
     }
 
+    // Close connection when application shuts down
     public void close() {
         if (mongoClient != null) {
             mongoClient.close();
