@@ -3,12 +3,12 @@ services:
   servidor:
     image: sd-server
     ports:
-      - "8080:8080"
+      - "3000:3000"
     restart: always
 
-  cliente:
-    image: sd-client
-    depends_on:
-      - servidor
-    environment:
-      - SERVIDOR_ENDERECO=servidor
+#  cliente:
+#    image: sd-client
+#    depends_on:
+#      - servidor
+#    environment:
+#      - SERVIDOR_ENDERECO=servidor
