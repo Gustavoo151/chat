@@ -12,6 +12,7 @@ public class Cliente {
     private static final String SERVIDOR_ENDERECO = dotenv.get("SERVIDOR_ENDERECO");
     private static final int SERVIDOR_PORTA = Integer.parseInt(dotenv.get("PORTA"));
 
+
     public static void main(String[] args) {
         try (Socket socket = new Socket(SERVIDOR_ENDERECO, SERVIDOR_PORTA);
              BufferedReader entradaServidor = new BufferedReader(new InputStreamReader(socket.getInputStream()));
