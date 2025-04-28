@@ -33,7 +33,7 @@ services:
     container_name: mongo3
     command: mongod --replSet rs0 --port 27017 --bind_ip_all
     ports:
-      - "27019:27017"
+      - "27019:27017"a
     volumes:
       - mongo3_data:/data/db
     networks:
